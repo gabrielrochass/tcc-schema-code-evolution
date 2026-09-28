@@ -1,15 +1,93 @@
-# TCC - Schema-Code Co-Evolution
+# TCC - Schema-Code Co-Evolution in Django Projects
 
-Repositório do Trabalho de Conclusão de Curso sobre co-evolução entre esquemas de banco de dados e código de aplicação.
+Repositorio do Trabalho de Conclusao de Curso sobre co-evolucao entre esquemas de banco de dados e codigo de aplicacao em projetos Django.
+
+## Objetivo
+
+Investigar empiricamente como mudancas de schema (via Django migrations) se relacionam com mudancas no codigo de aplicacao em projetos open-source.
+
+## Perguntas de Pesquisa
+
+- **RQ1:** Quais tipos de operacoes de schema estao associados a maior impacto no codigo?
+- **RQ2:** Como a coevolucao entre migrations e codigo se manifesta em projetos Django?
+- **RQ3:** Qual a extensao de mudancas em cada camada da aplicacao quando o schema evolui?
+
+## Pipeline
+
+```
+GitHub Search API
+    -> Encontrar projetos Django
+    -> Filtrar por quantidade de migrations
+    -> Clone parcial (preserva historico)
+    -> Extrair operacoes das migrations (AST)
+    -> Correlacionar com commits (git log)
+    -> Medir impacto no codigo (git diff-tree)
+    -> Agregar metricas por tipo de operacao
+```
 
 ## Estrutura
 
 ```
 tcc-schema-code-evolution/
-├── docs/           # Documentação do TCC (tema, perguntas, metodologia)
-├── papers/         # Fichamentos de artigos relacionados
-├── experiments/    # Experimentos de mineração e análise
-├── data/           # Dados brutos e processados
-├── scripts/        # Scripts de mineração e análise
-└── results/        # Tabelas e figuras geradas
+├── docs/                   # Documentacao do TCC
+│   ├── 01-tema.md
+│   ├── 02-perguntas-pesquisa.md
+│   ├── 03-trabalhos-relacionados.md
+│   ├── 04-metodologia.md
+│   └── 05-decisoes.md
+├── papers/                 # Fichamentos de artigos
+├── scripts/                # Scripts da pipeline
+│   ├── mine_repositories.py      # Mineracao de repos Django
+│   ├── extract_migrations.py     # Parser AST de migrations
+│   └── analyze_coevolution.py    # Analise de co-evolucao
+├── experiments/            # Experimentos intermediarios
+├── data/
+│   ├── raw/               # Dados brutos (candidates.csv)
+│   └── processed/         # Dados processados (coevolution.json)
+└── results/
+    ├── figures/
+    └── tables/
 ```
+
+## Como usar
+
+### Requisitos
+
+```bash
+pip install requests python-dotenv
+```
+
+Precisa de `GITHUB_TOKEN` no ambiente ou em `.env` (apenas para `mine_repositories.py`).
+
+### 1. Minerar repositorios
+
+```bash
+# Dry run (estima chamadas API)
+python scripts/mine_repositories.py --dry-run
+
+# Mineracao completa
+python scripts/mine_repositories.py --output data/raw/candidates.csv
+```
+
+### 2. Extrair migrations de um repo clonado
+
+```bash
+python scripts/extract_migrations.py /path/to/cloned/repo
+python scripts/extract_migrations.py /path/to/repos/ --batch --output data/processed/migrations.json
+```
+
+### 3. Analisar co-evolucao
+
+```bash
+python scripts/analyze_coevolution.py /path/to/cloned/repo
+python scripts/analyze_coevolution.py /path/to/repos/ --batch --output data/processed/coevolution.json
+
+# Com filtro de outliers
+python scripts/analyze_coevolution.py /path/to/repos/ --batch --max-commit-files 50
+```
+
+## Referencias
+
+- Qiu, Li & Su (2013). *An Empirical Analysis of the Co-evolution of Schema and Code in Database Applications.*
+- Meurice, Nagy & Cleve (2016). *Detecting and Preventing Program Inconsistencies under Database Schema Evolution.*
+- STAR-RG/django-smells — infraestrutura base para mineracao de repos Django.
