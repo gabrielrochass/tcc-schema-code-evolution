@@ -34,7 +34,8 @@ tcc-schema-code-evolution/
 │   ├── 02-perguntas-pesquisa.md
 │   ├── 03-trabalhos-relacionados.md
 │   ├── 04-metodologia.md
-│   └── 05-decisoes.md
+│   ├── 05-decisoes.md
+│   └── 06-selecao-corpus.md  # Processo de selecao com diagramas
 ├── papers/                 # Fichamentos de artigos
 ├── scripts/                # Scripts da pipeline
 │   ├── mine_repositories.py      # Mineracao de repos Django
