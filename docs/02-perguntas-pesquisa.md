@@ -61,7 +61,7 @@ RQ3: Isso e universal ou depende do tipo de projeto?
 
 ## Definicoes Operacionais
 
-- **Co-evolucao:** arquivos alterados no mesmo commit que introduziu a migration. Definicao simples, reprodutivel e nao-arbitraria. Limitacoes discutidas em [docs/05-decisoes.md](05-decisoes.md).
-- **Camada Django:** classificacao baseada no nome/caminho do arquivo (ver tabela em [docs/04-metodologia.md](04-metodologia.md)).
+- **Co-evolucao:** arquivos alterados no mesmo commit que introduziu a migration. Definicao simples, reprodutivel e nao-arbitraria. Limitacoes discutidas em [05-decisoes.md](05-decisoes.md).
+- **Camada Django:** classificacao baseada no nome/caminho do arquivo (ver tabela em [04-metodologia.md](04-metodologia.md)).
 - **Tipo de operacao:** classe da operacao no campo `operations` da migration, extraida via AST (ex: `migrations.AddField`, `migrations.CreateModel`).
 - **Aplicacao full-stack vs biblioteca:** classificacao manual do corpus com base na natureza do projeto (presenca de views, templates, admin vs exposicao de models/API para terceiros).

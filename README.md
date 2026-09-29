@@ -59,16 +59,18 @@ tcc-schema-code-evolution/
 pip install requests python-dotenv
 ```
 
-Precisa de `GITHUB_TOKEN` no ambiente ou em `.env` (apenas para `mine_repositories.py`).
+Precisa de `GITHUB_TOKEN` no ambiente ou em `.env` (apenas para mineracao).
 
 ### 1. Minerar repositorios
 
 ```bash
-# Dry run (estima chamadas API)
+# v1 — mineracao com buckets (rapida, ~5 min, amostra balanceada)
 python scripts/mine_repositories.py --dry-run
-
-# Mineracao completa
 python scripts/mine_repositories.py --output data/raw/candidates.csv
+
+# v2 — full-scan sem buckets (todas 10 paginas, ~23 min, corpus completo)
+python scripts/mine_repositories_full.py --dry-run
+python scripts/mine_repositories_full.py --output data/raw/candidates_full.csv
 ```
 
 ### 2. Extrair migrations de um repo clonado

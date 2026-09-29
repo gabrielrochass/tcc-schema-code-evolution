@@ -96,4 +96,4 @@ Cada arquivo alterado e classificado por seu papel no Django:
 
 ## Ameacas a Validade
 
-Ver docs/05-decisoes.md para discussao detalhada de limitacoes e decisoes metodologicas.
+Ver [05-decisoes.md](05-decisoes.md) para discussao detalhada de limitacoes e decisoes metodologicas.

@@ -21,10 +21,9 @@ flowchart TD
     F -->|"< 15 mig"| G["⚠️ 18 repos descartados\nPoucos dados de schema"]
     F -->|">= 15 mig"| H["🎯 17 candidatos\npara analise"]
     H --> I{"Classificacao por\nnatureza do projeto"}
-    I --> J["🏗️ Apps Full-Stack\n7 repos"]
-    I --> K["📦 Bibliotecas/Plugins\n5 repos"]
-    I --> L["⚠️ Outliers/Cuidado\n3 repos"]
-    I --> M["🔬 Analise pendente\n2 repos"]
+    I --> J["Apps Full-Stack\n8 repos"]
+    I --> K["Bibliotecas/Plugins\n6 repos"]
+    I --> L["Outliers/Cuidado\n3 repos"]
 
     style A fill:#4a90d9,color:#fff
     style H fill:#27ae60,color:#fff
@@ -113,6 +112,7 @@ Projetos que sao aplicacoes Django completas, com models, views, templates — c
 | **Ehco1996/django-sspanel** | 3.073 | 56 | 4 | Painel de proxy/VPN. Medio porte, boa variedade de ops. |
 | **sissbruecker/linkding** | 11.260 | 54 | 1 | Gerenciador de bookmarks. 1 app com schema ativo. |
 | **django-helpdesk/django-helpdesk** | 1.686 | 42 | 1 | Sistema de tickets. Schema concentrado em 1 app. |
+| **djangopackages/djangopackages** | 956 | 48 | 10 | Diretorio de pacotes Django. Muitas apps, schema ativo. |
 | **DjangoCRM/django-crm** | 631 | 35 | 10 | CRM completo. 10 apps, boa distribuicao. |
 | **liangliangyy/DjangoBlog** | 7.435 | 20 | 5 | Blog Django. Menor mas projeto real. |
 
@@ -129,6 +129,7 @@ Projetos que sao libs reutilizaveis. Tem migrations, mas padrao de co-evolucao d
 | **django-guardian/django-guardian** | 3.917 | 26 | 5 | Permissoes por objeto. Lib focada. |
 | **django-cms/django-filer** | 1.853 | 25 | 4 | Gerenciador de arquivos. Plugin do django-cms. |
 | **celery/django-celery-beat** | 1.951 | 23 | 2 | Scheduler de tarefas. Lib de infra. |
+| **python-social-auth/social-app-django** | 2.145 | 17 | 1 | Backend de autenticacao social. Lib focada. |
 
 **Nota:** Libs tendem a ter migrations mais "isoladas" — schema muda mas codigo downstream (views, templates) nao existe dentro do repo. Co-evolucao medida pode ser subestimada. Podem servir como **grupo de contraste** se quisermos comparar apps vs libs.
 
@@ -144,8 +145,6 @@ Projetos que sao libs reutilizaveis. Tem migrations, mas padrao de co-evolucao d
 
 | Repo | Stars | Mig | Motivo da exclusao |
 |------|-------|-----|--------------------|
-| djangopackages/djangopackages | 956 | 48 | ✅ Acima do limiar — **incluido acima como Large** |
-| python-social-auth/social-app-django | 2.145 | 17 | ✅ Acima do limiar — incluido como lib |
 | xhongc/music-tag-web | 6.082 | 11 | Abaixo do limiar (11 mig) |
 | django-wiki/django-wiki | 1.937 | 10 | Abaixo do limiar (10 mig) |
 | django-commons/django-polymorphic | 1.835 | 12 | Abaixo do limiar (12 mig) |

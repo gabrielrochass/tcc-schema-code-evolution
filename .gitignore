@@ -1,6 +1,19 @@
+# Environment
 .env
+
+# Python
 __pycache__/
 *.pyc
-data/raw/repos/
+*.egg-info/
 .venv/
 venv/
+
+# Cloned repos (large, not tracked)
+data/raw/repos/
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
