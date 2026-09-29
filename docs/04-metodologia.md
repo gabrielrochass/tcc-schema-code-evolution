@@ -4,36 +4,72 @@
 
 Estudo empirico quantitativo baseado em mineracao de repositorios de software (MSR).
 
-### Pipeline
+## Pipeline
 
+```mermaid
+flowchart TD
+    subgraph "1. Coleta"
+        A["GitHub Search API\nBusca por projetos Django"] --> B["Verificacao automatica\nmanage.py + Django em deps"]
+        B --> C["Classificacao\nmodulos, models, views, migrations"]
+    end
+
+    subgraph "2. Filtragem"
+        C --> D{"migrations >= 15?"}
+        D -->|Sim| E["Corpus candidato"]
+        D -->|Nao| F["Descartado"]
+    end
+
+    subgraph "3. Extracao"
+        E --> G["Clone parcial\ngit clone --filter=blob:none"]
+        G --> H["Parsing AST\ndas migrations"]
+        H --> I["Operacoes extraidas\ntipo, modelo, campo"]
+    end
+
+    subgraph "4. Correlacao"
+        I --> J["git log --diff-filter=A\ncommit que introduziu cada migration"]
+        J --> K["git diff-tree --numstat\narquivos e LOC alteradas"]
+    end
+
+    subgraph "5. Classificacao e Metricas"
+        K --> L["Classificacao por camada\nDjango (model, view, admin...)"]
+        L --> M["Calculo de metricas\nchurn, spread, co-evolution ratio"]
+    end
+
+    subgraph "6. Analise"
+        M --> N["Agregacao por tipo\nde operacao e camada"]
+        N --> O["Segmentacao\napps vs bibliotecas"]
+        O --> P["Respostas as RQs"]
+    end
+
+    style A fill:#3498db,color:#fff
+    style E fill:#27ae60,color:#fff
+    style F fill:#95a5a6,color:#fff
+    style P fill:#27ae60,color:#fff
 ```
-1. Mineracao de repos Django no GitHub
-   (scripts/mine_repositories.py)
-        |
-2. Filtragem: repos com >= 15 migrations
-        |
-3. Clone parcial (--filter=blob:none)
-   preserva historico git completo
-        |
-4. Extracao de operacoes das migrations
-   (scripts/extract_migrations.py)
-   metodo: parsing AST dos arquivos .py
-        |
-5. Correlacao migration -> commit
-   (scripts/analyze_coevolution.py)
-   metodo: git log --diff-filter=A
-        |
-6. Medicao de impacto no codigo
-   metodo: git diff-tree --numstat
-        |
-7. Agregacao e analise
-```
+
+### Scripts da pipeline
+
+| Etapa | Script | Entrada | Saida |
+|-------|--------|---------|-------|
+| Coleta + Filtragem | `mine_repositories.py` / `mine_repositories_full.py` | GitHub API | `candidates.csv` |
+| Extracao | `extract_migrations.py` | Repos clonados | `migrations.json` |
+| Correlacao + Metricas | `analyze_coevolution.py` | Repos clonados | `coevolution.json` |
 
 ## Selecao do Corpus
 
 ### Criterios de inclusao
 
-1. Projeto Django real (verificado via manage.py + requirements.txt)
+```mermaid
+flowchart LR
+    A["GitHub Search API"] --> B["language:Python\nfork:false\nstars >= 20\npush nos ultimos 2 anos"]
+    B --> C["Verificacao:\nmanage.py +\nDjango em deps"]
+    C --> D["Classificacao:\nmodulos, models,\nviews, migrations"]
+    D --> E["Filtro:\nmigrations >= 15"]
+
+    style E fill:#27ae60,color:#fff
+```
+
+1. Projeto Django real (verificado via manage.py + requirements.txt/pyproject.toml)
 2. Linguagem principal: Python
 3. Nao e fork
 4. Push nos ultimos 2 anos
@@ -45,6 +81,8 @@ Estudo empirico quantitativo baseado em mineracao de repositorios de software (M
 
 GitHub Search API, adaptando a infraestrutura do STAR-RG/django-smells.
 Referencia: https://github.com/STAR-RG/django-smells
+
+Detalhamento completo do processo de selecao em [06-selecao-corpus.md](06-selecao-corpus.md).
 
 ## Extracao de Dados
 
@@ -61,16 +99,45 @@ class Migration(migrations.Migration):
 
 O parser AST extrai: tipo da operacao, modelo afetado, campo (quando aplicavel).
 
+```mermaid
+flowchart LR
+    A["Arquivo .py\nde migration"] --> B["ast.parse()"]
+    B --> C["Localizar classe\nMigration"]
+    C --> D["Extrair lista\noperations = [...]"]
+    D --> E["Para cada operacao:\ntipo, modelo, campo"]
+
+    style A fill:#3498db,color:#fff
+    style E fill:#27ae60,color:#fff
+```
+
+### Categorias de operacoes
+
+| Categoria | Operacoes |
+|-----------|-----------|
+| Ciclo de vida do modelo | CreateModel, DeleteModel |
+| Mudancas de campo | AddField, RemoveField, AlterField, RenameField |
+| Indices e constraints | AddIndex, RemoveIndex, AddConstraint, RemoveConstraint |
+| Metadados do modelo | AlterModelOptions, AlterModelTable, RenameModel, AlterUniqueTogether, AlterIndexTogether |
+| Customizadas | RunSQL, RunPython, SeparateDatabaseAndState |
+
 ### Associacao migration -> codigo (Git)
 
 Definicao operacional: **os arquivos alterados no mesmo commit que introduziu a migration**.
 
-- `git log --diff-filter=A` para encontrar o commit que adicionou cada migration
-- `git diff-tree --numstat` para listar arquivos e LOC alteradas nesse commit
+```mermaid
+flowchart LR
+    A["migration file"] --> B["git log\n--diff-filter=A\n--format=%H"]
+    B --> C["SHA do commit\nque adicionou"]
+    C --> D["git diff-tree\n--numstat SHA"]
+    D --> E["Lista de arquivos\n+ LOC add/rem"]
+
+    style A fill:#3498db,color:#fff
+    style E fill:#27ae60,color:#fff
+```
 
 ### Classificacao de arquivos
 
-Cada arquivo alterado e classificado por seu papel no Django:
+Cada arquivo alterado e classificado por seu papel na arquitetura Django:
 
 | Categoria | Criterio |
 |-----------|----------|
@@ -80,19 +147,43 @@ Cada arquivo alterado e classificado por seu papel no Django:
 | serializer | serializers.py ou /serializers/ |
 | form | forms.py ou /forms/ |
 | admin | admin.py |
-| test | Contém 'test' no caminho |
+| test | Contem 'test' no caminho |
 | url | urls.py |
 | template | Arquivo .html |
 | other_python | Outros .py |
 | other | Demais arquivos |
 
+```mermaid
+flowchart TD
+    A["Arquivo alterado\nno commit"] --> B{"/migrations/?"}
+    B -->|Sim| C["migration"]
+    B -->|Nao| D{"models.py\nou /models/?"}
+    D -->|Sim| E["model"]
+    D -->|Nao| F{"views.py\nou /views/?"}
+    F -->|Sim| G["view"]
+    F -->|Nao| H{"admin.py?"}
+    H -->|Sim| I["admin"]
+    H -->|Nao| J{"Contem 'test'?"}
+    J -->|Sim| K["test"]
+    J -->|Nao| L["... demais\ncategorias"]
+
+    style C fill:#e74c3c,color:#fff
+    style E fill:#2980b9,color:#fff
+    style G fill:#27ae60,color:#fff
+    style I fill:#8e44ad,color:#fff
+    style K fill:#f39c12,color:#fff
+```
+
 ## Metricas
 
-1. **Code churn**: LOC adicionadas + removidas (excluindo migrations)
-2. **Spread**: Numero de arquivos de codigo alterados
-3. **Co-evolution ratio**: Proporcao de migration commits com mudancas de codigo
-4. **Category distribution**: Quais camadas sao afetadas
-5. **Operation type distribution**: Frequencia de cada tipo de operacao
+| Metrica | Descricao | RQ |
+|---------|-----------|-----|
+| **Co-evolution ratio** | Proporcao de migration commits que tambem alteram codigo | RQ1 |
+| **Code churn** | LOC adicionadas + removidas (excluindo migrations) | RQ1, RQ2 |
+| **Spread** | Numero de arquivos de codigo alterados por commit | RQ1, RQ2 |
+| **Category distribution** | Frequencia de cada camada nos commits com migration | RQ2 |
+| **Operation type distribution** | Frequencia e impacto de cada tipo de operacao | RQ2 |
+| **Group comparison** | Metricas acima segmentadas por apps vs libs | RQ3 |
 
 ## Ameacas a Validade
 

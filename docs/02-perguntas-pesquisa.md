@@ -46,17 +46,14 @@
 
 As tres perguntas constroem uma investigacao progressiva:
 
-```
-RQ1: Mudou o schema — mudou codigo junto?
-      (grau de acoplamento)
-          |
-          v
-RQ2: Se mudou, onde exatamente?
-      (padrao de propagacao por camada e tipo de operacao)
-          |
-          v
-RQ3: Isso e universal ou depende do tipo de projeto?
-      (generalizacao e limites)
+```mermaid
+flowchart TD
+    A["RQ1: Mudou o schema -- mudou codigo junto?\n(grau de acoplamento)"] --> B["RQ2: Se mudou, onde exatamente?\n(propagacao por camada e tipo de operacao)"]
+    B --> C["RQ3: Isso e universal ou depende do tipo de projeto?\n(generalizacao e limites)"]
+
+    style A fill:#2980b9,color:#fff
+    style B fill:#27ae60,color:#fff
+    style C fill:#8e44ad,color:#fff
 ```
 
 ## Definicoes Operacionais

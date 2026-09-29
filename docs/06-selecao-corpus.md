@@ -13,13 +13,13 @@ O processo de selecao segue um funil progressivo de filtragem, partindo de uma b
 
 ```mermaid
 flowchart TD
-    A["🔍 GitHub Search API\n3.850 repositorios encontrados"] --> B["📋 Paginacao\n300 candidatos avaliados\n(3 primeiras paginas)"]
+    A["GitHub Search API\n3.850 repositorios encontrados"] --> B["Paginacao\n300 candidatos avaliados\n(3 primeiras paginas)"]
     B --> C{"Verificacao Django\nmanage.py + requirements"}
-    C -->|Rejeitado| D["❌ Scaffolds / nao-Django\nEx: railwayapp-templates,\ndjango-heroku"]
-    C -->|Aprovado| E["✅ 35 projetos Django\nverificados"]
+    C -->|Rejeitado| D["Scaffolds / nao-Django\nEx: railwayapp-templates,\ndjango-heroku"]
+    C -->|Aprovado| E["35 projetos Django\nverificados"]
     E --> F{"Filtro: >= 15 migrations"}
-    F -->|"< 15 mig"| G["⚠️ 18 repos descartados\nPoucos dados de schema"]
-    F -->|">= 15 mig"| H["🎯 17 candidatos\npara analise"]
+    F -->|"< 15 mig"| G["18 repos descartados\nPoucos dados de schema"]
+    F -->|">= 15 mig"| H["17 candidatos\npara analise"]
     H --> I{"Classificacao por\nnatureza do projeto"}
     I --> J["Apps Full-Stack\n8 repos"]
     I --> K["Bibliotecas/Plugins\n6 repos"]
@@ -212,11 +212,11 @@ quadrantChart
 
 | Decisao | Opcoes | Status |
 |---------|--------|--------|
-| Incluir openedx-platform? | (a) Incluir e tratar como outlier, (b) Excluir, (c) Analisar separadamente | ⏳ Pendente |
-| Excluir dj4e-samples? | Projeto didatico — migrations nao representam evolucao real | ⏳ Provavel exclusao |
-| Investigar django-ledger? | 0 models/views detectados — estrutura pode ser nao-convencional | ⏳ Pendente |
-| Separar apps vs libs? | Analisar juntos vs criar grupos de comparacao | ⏳ Pendente |
-| Expandir mineracao? | Cobrir mais paginas do GitHub (alem das 3 iniciais) | ⏳ Avaliar apos analise exploratoria |
+| Incluir openedx-platform? | (a) Incluir e tratar como outlier, (b) Excluir, (c) Analisar separadamente | Pendente |
+| Excluir dj4e-samples? | Projeto didatico — migrations nao representam evolucao real | Provavel exclusao |
+| Investigar django-ledger? | 0 models/views detectados — estrutura pode ser nao-convencional | Pendente |
+| Separar apps vs libs? | Analisar juntos vs criar grupos de comparacao | Pendente |
+| Expandir mineracao? | Cobrir mais paginas do GitHub (alem das 3 iniciais) | Avaliar apos analise exploratoria |
 
 ---
 
@@ -224,11 +224,11 @@ quadrantChart
 
 ```mermaid
 flowchart LR
-    A["✅ Mineracao\n(concluida)"] --> B["🔄 Clone parcial\ndos candidatos"]
-    B --> C["🔄 Extracao AST\nextract_migrations.py"]
-    C --> D["🔄 Analise co-evolucao\nanalyze_coevolution.py"]
-    D --> E["📊 Analise exploratoria\ne selecao final"]
-    E --> F["📝 Refinamento das RQs\ncom base nos dados"]
+    A["Mineracao\n(concluida)"] --> B["Clone parcial\ndos candidatos"]
+    B --> C["Extracao AST\nextract_migrations.py"]
+    C --> D["Analise co-evolucao\nanalyze_coevolution.py"]
+    D --> E["Analise exploratoria\ne selecao final"]
+    E --> F["Refinamento das RQs\ncom base nos dados"]
 
     style A fill:#27ae60,color:#fff
     style B fill:#f39c12,color:#fff
