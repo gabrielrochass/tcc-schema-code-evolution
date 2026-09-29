@@ -1,33 +1,67 @@
 # Perguntas de Pesquisa
 
-## RQ1: Quais tipos de operacoes de schema estao associados a maior impacto no codigo?
+## RQ1: Qual o grau de acoplamento entre mudancas de schema e mudancas no codigo de aplicacao nos commits de projetos Django open-source?
 
-**Medir:** Code churn (LOC adicionadas + removidas) e spread (arquivos afetados) por tipo de operacao (AddField, CreateModel, AlterField, etc.)
+**Medir:** Co-evolution ratio — proporcao de commits que introduzem migrations e tambem alteram arquivos de codigo (excluindo as proprias migrations).
 
-**Dados:** Extraidos via AST parsing das migrations + git diff-tree dos commits correspondentes.
+**Desdobramentos:**
+- Proporcao de commits acoplados (migration + codigo) vs commits migration-only
+- Distribuicao do numero de arquivos de codigo co-modificados por commit
+- Code churn (LOC adicionadas + removidas) nos commits acoplados vs migration-only
 
-**Hipotese:** CreateModel e DeleteModel devem ter maior impacto que AlterField, pois envolvem criacao/remocao de entidades inteiras.
+**Dados:** Para cada migration, identificar o commit que a introduziu (`git log --diff-filter=A`) e listar os demais arquivos alterados (`git diff-tree --numstat`).
 
-## RQ2: Como a coevolucao entre migrations e codigo se manifesta em projetos Django?
-
-**Medir:** Co-evolution ratio (proporcao de commits com migration que tambem alteram codigo nao-migration), distribuicao de categorias de arquivo afetadas.
-
-**Dados:** Classificacao dos arquivos alterados por papel no Django (model, view, admin, test, serializer, form, template, url).
-
-**Hipotese:** A maioria dos commits que incluem migrations tambem incluem mudancas em models.py e em pelo menos uma camada downstream (views, admin, tests).
-
-## RQ3 (bonus): Qual a extensao de mudancas em cada camada da aplicacao quando o schema evolui?
-
-**Medir:** Distribuicao detalhada por categoria de arquivo, agrupada por tipo de operacao.
-
-**Dados:** Mesmos da RQ1/RQ2, com cruzamento tipo_operacao x categoria_arquivo.
-
-**Hipotese:** Mudancas de schema propagam de forma desigual — models.py e admin.py sao mais frequentemente afetados que templates ou URLs.
+**Hipotese:** A maioria dos commits com migration tambem altera models.py (pois `makemigrations` parte de mudancas em models), mas uma parcela relevante nao toca camadas downstream (views, admin, tests), indicando acoplamento parcial.
 
 ---
 
-## Notas
+## RQ2: Quais camadas da arquitetura Django sao mais frequentemente co-modificadas em resposta a evolucoes de schema, e como essa distribuicao se relaciona com o tipo de operacao de migration realizada?
 
-- Todas as RQs sao respondidas com a **mesma pipeline de dados**: migration AST -> git log -> git diff-tree -> metricas.
-- A definicao operacional de "co-evolucao" e: **arquivos alterados no mesmo commit que introduziu a migration**.
-- Essa definicao tem limitacoes conhecidas (ver docs/05-decisoes.md), mas e reprodutivel e automatizavel.
+**Medir:**
+- Frequencia de co-modificacao por camada Django (model, view, admin, serializer, form, test, url, template)
+- Cruzamento: tipo de operacao (AddField, CreateModel, RemoveField, AlterField, etc.) x camada afetada
+
+**Dados:** Classificacao dos arquivos alterados por papel na arquitetura Django + tipo de operacao extraido via AST parsing das migrations.
+
+**Hipotese:**
+- models.py e admin.py sao as camadas mais frequentemente co-modificadas (epicentro da propagacao)
+- Operacoes de ciclo de vida de modelo (CreateModel, DeleteModel) afetam mais camadas que operacoes de campo (AddField, AlterField)
+- Tests e templates sao camadas menos acopladas a mudancas de schema
+
+---
+
+## RQ3: Os padroes de co-evolucao observados diferem entre aplicacoes Django full-stack e bibliotecas reutilizaveis?
+
+**Medir:** Comparacao das metricas de RQ1 e RQ2 entre dois grupos:
+- **Grupo A — Aplicacoes full-stack:** projetos com ciclo completo (models, views, templates, admin)
+- **Grupo B — Bibliotecas reutilizaveis:** libs/plugins Django que expoe models mas cujo codigo downstream vive em outros projetos
+
+**Dados:** Mesma pipeline, com segmentacao por grupo definido na fase de selecao do corpus.
+
+**Hipotese:** Bibliotecas apresentam co-evolution ratio menor que aplicacoes full-stack, pois mudancas de schema em libs propagam para codigo de terceiros (fora do repositorio analisado), enquanto aplicacoes concentram toda a propagacao internamente.
+
+---
+
+## Narrativa
+
+As tres perguntas constroem uma investigacao progressiva:
+
+```
+RQ1: Mudou o schema — mudou codigo junto?
+      (grau de acoplamento)
+          |
+          v
+RQ2: Se mudou, onde exatamente?
+      (padrao de propagacao por camada e tipo de operacao)
+          |
+          v
+RQ3: Isso e universal ou depende do tipo de projeto?
+      (generalizacao e limites)
+```
+
+## Definicoes Operacionais
+
+- **Co-evolucao:** arquivos alterados no mesmo commit que introduziu a migration. Definicao simples, reprodutivel e nao-arbitraria. Limitacoes discutidas em [docs/05-decisoes.md](05-decisoes.md).
+- **Camada Django:** classificacao baseada no nome/caminho do arquivo (ver tabela em [docs/04-metodologia.md](04-metodologia.md)).
+- **Tipo de operacao:** classe da operacao no campo `operations` da migration, extraida via AST (ex: `migrations.AddField`, `migrations.CreateModel`).
+- **Aplicacao full-stack vs biblioteca:** classificacao manual do corpus com base na natureza do projeto (presenca de views, templates, admin vs exposicao de models/API para terceiros).

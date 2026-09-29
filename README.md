@@ -8,9 +8,9 @@ Investigar empiricamente como mudancas de schema (via Django migrations) se rela
 
 ## Perguntas de Pesquisa
 
-- **RQ1:** Quais tipos de operacoes de schema estao associados a maior impacto no codigo?
-- **RQ2:** Como a coevolucao entre migrations e codigo se manifesta em projetos Django?
-- **RQ3:** Qual a extensao de mudancas em cada camada da aplicacao quando o schema evolui?
+- **RQ1:** Qual o grau de acoplamento entre mudancas de schema e mudancas no codigo de aplicacao nos commits de projetos Django open-source?
+- **RQ2:** Quais camadas da arquitetura Django sao mais frequentemente co-modificadas em resposta a evolucoes de schema, e como essa distribuicao se relaciona com o tipo de operacao de migration realizada?
+- **RQ3:** Os padroes de co-evolucao observados diferem entre aplicacoes Django full-stack e bibliotecas reutilizaveis?
 
 ## Pipeline
 
@@ -38,7 +38,8 @@ tcc-schema-code-evolution/
 │   └── 06-selecao-corpus.md  # Processo de selecao com diagramas
 ├── papers/                 # Fichamentos de artigos
 ├── scripts/                # Scripts da pipeline
-│   ├── mine_repositories.py      # Mineracao de repos Django
+│   ├── mine_repositories.py      # Mineracao com buckets (v1)
+│   ├── mine_repositories_full.py # Mineracao full-scan sem buckets (v2)
 │   ├── extract_migrations.py     # Parser AST de migrations
 │   └── analyze_coevolution.py    # Analise de co-evolucao
 ├── experiments/            # Experimentos intermediarios
