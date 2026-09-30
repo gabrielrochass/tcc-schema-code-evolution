@@ -85,7 +85,15 @@ class GitHubClient:
         })
 
     def _get(self, url, params=None, _retries=0):
-        resp = self.session.get(url, params=params, timeout=30)
+        if _retries >= 5:
+            raise requests.exceptions.ConnectionError(f"Failed after {_retries} retries: {url}")
+        try:
+            resp = self.session.get(url, params=params, timeout=30)
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as exc:
+            wait = min(10 * (2 ** _retries), 120)
+            print(f"  connection error, retry {_retries + 1}/5 in {wait}s: {exc}", file=sys.stderr)
+            time.sleep(wait)
+            return self._get(url, params, _retries=_retries + 1)
         if resp.status_code == 403 and "rate limit" in resp.text.lower():
             if _retries >= 3:
                 resp.raise_for_status()
