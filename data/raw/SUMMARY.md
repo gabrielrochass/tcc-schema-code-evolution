@@ -1,21 +1,21 @@
-# data/raw — Dados Brutos da Mineracao
+# data/raw -- Dados Brutos da Mineracao
 
-**Data:** 2026-09-29
 **Documentacao completa:** [docs/06-selecao-corpus.md](../../docs/06-selecao-corpus.md)
 
 ## Arquivos
 
-| Arquivo | Descricao |
-|---------|-----------|
-| `candidates.csv` | 35 repos Django verificados (formato tabular) |
-| `candidates.json` | Mesmos dados em JSON (mais facil de processar em scripts) |
+| Arquivo | Script | Descricao |
+|---------|--------|-----------|
+| `candidates.csv` / `.json` | v1 (buckets) | 35 repos, 17 com >=15 mig. Amostra inicial. |
+| `candidates_full.csv` / `.json` | v2 (full-scan) | 416 repos, 131 com >=15 mig. Corpus completo. |
 
-## Numeros Rapidos
+## Numeros -- Full-scan (v2)
 
 - 3.850 matches na busca GitHub
-- 300 avaliados (3 paginas)
-- **35 verificados como Django real**
-- **17 com >= 15 migrations** (corpus candidato)
+- 1.000 avaliados (10 paginas)
+- **416 verificados como Django real**
+- **131 com >= 15 migrations**
+- Distribuicao: S=55, M=22, L=54
 
 ## Campos no CSV/JSON
 
