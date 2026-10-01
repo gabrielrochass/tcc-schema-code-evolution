@@ -13,14 +13,17 @@ flowchart TD
         B --> C["Classificacao\nmodulos, models, views, migrations"]
     end
 
-    subgraph "2. Filtragem"
+    subgraph "2. Filtragem e Classificacao"
         C --> D{"migrations >= 15?"}
-        D -->|Sim| E["Corpus candidato"]
+        D -->|Sim| E["131 candidatos"]
         D -->|Nao| F["Descartado"]
+        E --> CL["Classificacao manual\napp / lib / exclude"]
+        CL --> CV["Cross-validation automatizada\nclassify_repos.py (kappa = 0,63)"]
+        CV --> E2["Corpus final: 124 repos\n86 apps + 38 libs"]
     end
 
     subgraph "3. Extracao"
-        E --> G["Clone parcial\ngit clone --filter=blob:none"]
+        E2 --> G["Clone parcial\ngit clone --filter=blob:none"]
         G --> H["Parsing AST\ndas migrations"]
         H --> I["Operacoes extraidas\ntipo, modelo, campo"]
     end
@@ -42,9 +45,10 @@ flowchart TD
     end
 
     style A fill:#3498db,color:#fff
-    style E fill:#27ae60,color:#fff
+    style E2 fill:#27ae60,color:#fff
     style F fill:#95a5a6,color:#fff
     style P fill:#27ae60,color:#fff
+    style CV fill:#8e44ad,color:#fff
 ```
 
 ### Scripts da pipeline
@@ -52,6 +56,7 @@ flowchart TD
 | Etapa | Script | Entrada | Saida |
 |-------|--------|---------|-------|
 | Coleta + Filtragem | `mine_repositories.py` / `mine_repositories_full.py` | GitHub API | `candidates.csv` |
+| Classificacao | `classify_repos.py` | `candidates_full.json` + GitHub API | `corpus_classification_auto.json` |
 | Extracao | `extract_migrations.py` | Repos clonados | `migrations.json` |
 | Correlacao + Metricas | `analyze_coevolution.py` | Repos clonados | `coevolution.json` |
 

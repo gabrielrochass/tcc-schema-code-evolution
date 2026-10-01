@@ -1,0 +1,210 @@
+{
+  "total_compared": 131,
+  "agreements": 108,
+  "accuracy": 0.8244,
+  "cohens_kappa": 0.6279,
+  "kappa_interpretation": "substantial",
+  "confusion_matrix": {
+    "app": {
+      "app": 76,
+      "lib": 9,
+      "exclude": 1
+    },
+    "lib": {
+      "app": 11,
+      "lib": 27,
+      "exclude": 0
+    },
+    "exclude": {
+      "app": 2,
+      "lib": 0,
+      "exclude": 5
+    }
+  },
+  "per_class_metrics": {
+    "app": {
+      "precision": 0.8539,
+      "recall": 0.8837,
+      "f1": 0.8686,
+      "support": 86
+    },
+    "lib": {
+      "precision": 0.75,
+      "recall": 0.7105,
+      "f1": 0.7297,
+      "support": 38
+    },
+    "exclude": {
+      "precision": 0.8333,
+      "recall": 0.7143,
+      "f1": 0.7692,
+      "support": 7
+    }
+  },
+  "disagreements": [
+    {
+      "full_name": "1Panel-dev/MaxKB",
+      "manual": "app",
+      "automated": "lib",
+      "rule": "R2",
+      "reason": "packaging config present, no manage.py at root"
+    },
+    {
+      "full_name": "DataTalksClub/course-management-platform",
+      "manual": "app",
+      "automated": "exclude",
+      "rule": "R1",
+      "reason": "repository name contains exclude keyword"
+    },
+    {
+      "full_name": "KoalixSwitzerland/koalixcrm",
+      "manual": "app",
+      "automated": "lib",
+      "rule": "R4b",
+      "reason": "on PyPI with few templates, deployment likely dev-only"
+    },
+    {
+      "full_name": "Nitrate/Nitrate",
+      "manual": "app",
+      "automated": "lib",
+      "rule": "R2",
+      "reason": "packaging config present, no manage.py at root"
+    },
+    {
+      "full_name": "adamcharnock/django-hordak",
+      "manual": "lib",
+      "automated": "app",
+      "rule": "R4a",
+      "reason": "deployment + packaging (app distributed as package)"
+    },
+    {
+      "full_name": "arrobalytics/django-ledger",
+      "manual": "lib",
+      "automated": "app",
+      "rule": "R3",
+      "reason": "deployment artifacts present, no packaging config"
+    },
+    {
+      "full_name": "bennylope/django-organizations",
+      "manual": "lib",
+      "automated": "app",
+      "rule": "R6",
+      "reason": "manage.py at root, 21 HTML templates"
+    },
+    {
+      "full_name": "codingforentrepreneurs/SaaS-for-Enterprise-with-Django",
+      "manual": "exclude",
+      "automated": "app",
+      "rule": "R3",
+      "reason": "deployment artifacts present, no packaging config"
+    },
+    {
+      "full_name": "django-cms/django-cms",
+      "manual": "lib",
+      "automated": "app",
+      "rule": "R6",
+      "reason": "manage.py at root, 189 HTML templates"
+    },
+    {
+      "full_name": "django-getpaid/django-getpaid",
+      "manual": "lib",
+      "automated": "app",
+      "rule": "R4a",
+      "reason": "deployment + packaging (app distributed as package)"
+    },
+    {
+      "full_name": "django-guardian/django-guardian",
+      "manual": "lib",
+      "automated": "app",
+      "rule": "R6",
+      "reason": "manage.py at root, 39 HTML templates"
+    },
+    {
+      "full_name": "djaodjin/djaodjin-saas",
+      "manual": "lib",
+      "automated": "app",
+      "rule": "R6",
+      "reason": "manage.py at root, 65 HTML templates"
+    },
+    {
+      "full_name": "explorerhq/sql-explorer",
+      "manual": "lib",
+      "automated": "app",
+      "rule": "R4a",
+      "reason": "deployment + packaging (app distributed as package)"
+    },
+    {
+      "full_name": "innogames/ltc",
+      "manual": "app",
+      "automated": "lib",
+      "rule": "R5",
+      "reason": "packaging config, 2 templates, no deployment"
+    },
+    {
+      "full_name": "line/promgen",
+      "manual": "app",
+      "automated": "lib",
+      "rule": "R2",
+      "reason": "packaging config present, no manage.py at root"
+    },
+    {
+      "full_name": "milesmcc/shynet",
+      "manual": "app",
+      "automated": "lib",
+      "rule": "R2",
+      "reason": "packaging config present, no manage.py at root"
+    },
+    {
+      "full_name": "modoboa/modoboa",
+      "manual": "app",
+      "automated": "lib",
+      "rule": "R2",
+      "reason": "packaging config present, no manage.py at root"
+    },
+    {
+      "full_name": "mozilla/kitsune",
+      "manual": "app",
+      "automated": "lib",
+      "rule": "R4b",
+      "reason": "on PyPI with few templates, deployment likely dev-only"
+    },
+    {
+      "full_name": "pennersr/django-allauth",
+      "manual": "lib",
+      "automated": "app",
+      "rule": "R6",
+      "reason": "manage.py at root, 139 HTML templates"
+    },
+    {
+      "full_name": "silverapp/silver",
+      "manual": "app",
+      "automated": "lib",
+      "rule": "R4b",
+      "reason": "on PyPI with few templates, deployment likely dev-only"
+    },
+    {
+      "full_name": "stellar/django-polaris",
+      "manual": "lib",
+      "automated": "app",
+      "rule": "R4a",
+      "reason": "deployment + packaging (app distributed as package)"
+    },
+    {
+      "full_name": "viewflow/viewflow",
+      "manual": "lib",
+      "automated": "app",
+      "rule": "R6",
+      "reason": "manage.py at root, 82 HTML templates"
+    },
+    {
+      "full_name": "wagtail/bakerydemo",
+      "manual": "exclude",
+      "automated": "app",
+      "rule": "R3",
+      "reason": "deployment artifacts present, no packaging config"
+    }
+  ],
+  "disagreement_count": 23,
+  "skipped": [],
+  "missing_from_candidates": []
+}

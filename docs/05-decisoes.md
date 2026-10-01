@@ -48,6 +48,18 @@ Portanto, a migration e **consequencia** da mudanca em models.py, nao causa. Iss
 
 **Risco:** Pode descartar commits legitimos de grandes features. Por isso e opcional (--max-commit-files).
 
+## Decisao 6: Classificacao manual validada por heuristicas automatizadas
+
+**Escolha:** Classificacao manual (app/lib/exclude) como ground truth, validada por um classificador heuristico automatizado com 9 regras baseadas em sinais estruturais (packaging, deploy, templates, PyPI, keywords no nome).
+
+**Alternativa descartada:** Classificacao puramente automatizada — a fronteira entre app e lib em Django e inerentemente fuzzy (~18% dos casos sao ambiguos). Libs como `django-allauth` (139 templates) e `django-cms` (189 templates) sao estruturalmente indistinguiveis de apps. Apps como `modoboa` (distribuida via pip, sem manage.py na raiz) sao estruturalmente indistinguiveis de libs.
+
+**Resultado:** Cohen's kappa = 0,63 (concordancia substancial, Landis & Koch 1977). 108/131 repos classificados igualmente. Os 23 desacordos sao explicaveis por padroes sistematicos, nao por inconsistencia.
+
+**Justificativa:** A cross-validation demonstra que (a) os criterios manuais sao sistematicos e reprodutiveis, (b) os desacordos refletem ambiguidades reais da plataforma Django, e (c) o classificador automatizado esta disponivel para reproducao independente.
+
+Detalhes completos: [06-selecao-corpus.md, secao 5.5](06-selecao-corpus.md#55-validacao-automatizada-cross-validation).
+
 ## Problemas metodologicos identificados
 
 | Problema | Severidade | Tratamento |
