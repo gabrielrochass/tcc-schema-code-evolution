@@ -39,6 +39,7 @@ tcc-schema-code-evolution/
 │   ├── 07-fundamentacao-teorica.md  # Cap 2 - Fundamentacao teorica
 │   ├── 08-trabalhos-relacionados.md # Cap 3 - Trabalhos relacionados
 │   ├── 09-introducao.md             # Cap 1 - Introducao
+│   ├── 10-metodologia-texto.md      # Cap 4 - Metodologia (texto corrido)
 │   ├── Modelo-monografia-tcc.pdf    # Template UFPE
 │   └── proposal/                    # Proposta de TCC
 │       └── proposta-tcc-oficial.pdf # Proposta assinada
