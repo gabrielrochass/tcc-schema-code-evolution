@@ -10,6 +10,7 @@ venv/
 
 # Cloned repos (large, not tracked)
 data/raw/repos/
+data/repos/
 
 # IDE / OS
 .idea/
