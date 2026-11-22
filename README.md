@@ -39,9 +39,7 @@ tcc-schema-code-evolution/
 │   ├── 07-fundamentacao-teorica.md  # Cap 2 - Fundamentacao teorica
 │   ├── Modelo-monografia-tcc.pdf    # Template UFPE
 │   └── proposal/                    # Proposta de TCC
-│       ├── proposta-tcc-oficial.pdf # Proposta assinada
-│       ├── proposta-tcc.pdf         # PDF gerado
-│       └── gerar_proposta.py        # Script gerador
+│       └── proposta-tcc-oficial.pdf # Proposta assinada
 ├── papers/                 # Fichamentos de artigos
 ├── scripts/                # Scripts da pipeline
 │   ├── mine_repositories.py      # Mineracao com buckets (v1)
