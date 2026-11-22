@@ -30,18 +30,19 @@ GitHub Search API
 ```
 tcc-schema-code-evolution/
 ├── docs/                   # Documentacao do TCC
-│   ├── 01-tema.md
-│   ├── 02-perguntas-pesquisa.md
-│   ├── 03-trabalhos-relacionados.md
-│   ├── 05-decisoes.md
-│   ├── 06-selecao-corpus.md  # Processo de selecao com diagramas
-│   ├── 07-fundamentacao-teorica.md  # Cap 2 - Fundamentacao teorica
-│   ├── 08-trabalhos-relacionados.md # Cap 3 - Trabalhos relacionados
-│   ├── 09-introducao.md             # Cap 1 - Introducao
-│   ├── 10-metodologia-texto.md      # Cap 4 - Metodologia (texto corrido)
-│   ├── Modelo-monografia-tcc.pdf    # Template UFPE
-│   └── proposal/                    # Proposta de TCC
-│       └── proposta-tcc-oficial.pdf # Proposta assinada
+│   ├── 01-introducao.md              # Cap 1 - Introducao
+│   ├── 02-fundamentacao-teorica.md   # Cap 2 - Fundamentacao teorica
+│   ├── 03-trabalhos-relacionados.md  # Cap 3 - Trabalhos relacionados
+│   ├── 04-metodologia.md             # Cap 4 - Metodologia
+│   ├── Modelo-monografia-tcc.pdf     # Template UFPE
+│   ├── proposal/                     # Proposta de TCC
+│   │   └── proposta-tcc-oficial.pdf
+│   └── rascunhos/                    # Rascunhos e notas de trabalho
+│       ├── 01-tema.md
+│       ├── 02-perguntas-pesquisa.md
+│       ├── 03-trabalhos-relacionados.md
+│       ├── 05-decisoes.md
+│       └── 06-selecao-corpus.md
 ├── papers/                 # Fichamentos de artigos
 ├── scripts/                # Scripts da pipeline
 │   ├── mine_repositories.py      # Mineracao com buckets (v1)
