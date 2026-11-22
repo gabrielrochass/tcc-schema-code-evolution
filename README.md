@@ -37,6 +37,7 @@ tcc-schema-code-evolution/
 │   ├── 05-decisoes.md
 │   ├── 06-selecao-corpus.md  # Processo de selecao com diagramas
 │   ├── 07-fundamentacao-teorica.md  # Cap 2 - Fundamentacao teorica
+│   ├── 08-trabalhos-relacionados.md # Cap 3 - Trabalhos relacionados
 │   ├── Modelo-monografia-tcc.pdf    # Template UFPE
 │   └── proposal/                    # Proposta de TCC
 │       └── proposta-tcc-oficial.pdf # Proposta assinada
