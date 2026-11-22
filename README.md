@@ -35,7 +35,10 @@ tcc-schema-code-evolution/
 │   ├── 03-trabalhos-relacionados.md
 │   ├── 04-metodologia.md
 │   ├── 05-decisoes.md
-│   └── 06-selecao-corpus.md  # Processo de selecao com diagramas
+│   ├── 06-selecao-corpus.md  # Processo de selecao com diagramas
+│   ├── 07-fundamentacao-teorica.md  # Cap 2 - Fundamentacao teorica
+│   ├── Modelo-monografia-tcc.pdf    # Template UFPE
+│   └── proposta-tcc-oficial.pdf     # Proposta assinada
 ├── papers/                 # Fichamentos de artigos
 ├── scripts/                # Scripts da pipeline
 │   ├── mine_repositories.py      # Mineracao com buckets (v1)
