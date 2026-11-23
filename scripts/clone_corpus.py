@@ -55,7 +55,6 @@ def clone_repo(full_name: str, output_dir: Path, timeout: int = 300) -> dict:
             [
                 "git", "clone",
                 "--filter=blob:none",
-                "--no-checkout",
                 url,
                 str(repo_dir),
             ],

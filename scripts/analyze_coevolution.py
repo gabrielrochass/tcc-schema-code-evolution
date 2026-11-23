@@ -28,11 +28,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from extract_migrations import extract_operations, find_migration_files
 
 
-def run(cmd, cwd=None, timeout=120):
+def run(cmd, cwd=None, timeout=300):
     """Run a git command and return stdout."""
-    r = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True,
-                       timeout=timeout, encoding="utf-8", errors="replace")
-    return r.stdout or "", r.stderr or "", r.returncode
+    try:
+        r = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True,
+                           timeout=timeout, encoding="utf-8", errors="replace")
+        return r.stdout or "", r.stderr or "", r.returncode
+    except subprocess.TimeoutExpired:
+        return "", "timeout", -1
 
 
 def find_migration_commit(repo_path, rel_path):
