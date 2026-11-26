@@ -1,6 +1,6 @@
 # 5 Resultados
 
-Este capítulo apresenta os resultados obtidos pela aplicação da pipeline de análise descrita na Seção 4 ao corpus de 124 projetos Django open-source. A análise processou 11.624 pares migration-commit extraídos de 122 repositórios (dois repositórios não produziram pares válidos devido a históricos Git incompatíveis com a extração). Os resultados são organizados pelas três perguntas de pesquisa.
+Este capítulo apresenta os resultados obtidos pela aplicação da pipeline de análise descrita na Seção 4 ao corpus de 124 projetos Django open-source. A análise processou 11.624 pares migration-commit extraídos de 122 repositórios. Dos 124 repositórios do corpus, dois não produziram pares válidos devido a históricos Git incompatíveis com a extração. A diferença entre o total de 12.173 arquivos de migration identificados e os 11.624 pares analisados deve-se a migrations cujo commit de introdução não pôde ser determinado (migrations adicionadas via merge, squash ou importação de histórico externo). Os resultados são organizados pelas três perguntas de pesquisa.
 
 ---
 
@@ -68,7 +68,7 @@ A Tabela a seguir apresenta a distribuição dos arquivos co-modificados por cam
 | form | 5.457 | 1,7% |
 | url | 4.584 | 1,4% |
 
-Três observações destacam-se. Primeiro, as categorias `other` e `other_python` dominam a distribuição (52,3% combinadas), indicando que commits com migration frequentemente incluem mudanças em arquivos fora das camadas Django clássicas — como configurações, scripts de deploy, documentação e utilitários. Segundo, `test` é a terceira camada mais afetada (16,3%), evidenciando que testes são frequentemente atualizados em resposta a mudanças de schema. Terceiro, entre as camadas Django específicas, `model` (7,8%) é a mais afetada, seguida por `view` (5,4%), `template` (11,2%), `admin` (1,7%), `form` (1,7%) e `serializer` (2,1%).
+Três observações destacam-se. Primeiro, as categorias `other` e `other_python` dominam a distribuição (52,3% combinadas), indicando que commits com migration frequentemente incluem mudanças em arquivos fora das camadas Django clássicas — como configurações, scripts de deploy, documentação e utilitários. Segundo, `test` é a terceira camada mais afetada (16,3%), evidenciando que testes são frequentemente atualizados em resposta a mudanças de schema. Terceiro, entre as camadas Django específicas, `template` (11,2%) é a mais afetada, seguida por `model` (7,8%), `view` (5,4%), `serializer` (2,1%), `admin` (1,7%), `form` (1,7%) e `url` (1,4%).
 
 ### 5.2.2 Co-evolution ratio por tipo de operação
 
@@ -118,7 +118,7 @@ Padrões observados:
 
 ### 5.3.1 Visão geral
 
-O corpus analisado contém 85 aplicações (10.564 pares migration-commit) e 37 bibliotecas (1.060 pares). A diferença de escala reflete a composição do corpus: aplicações concentram 90,9% dos pares, pois possuem significativamente mais migrations por repositório.
+O corpus original contém 86 aplicações e 38 bibliotecas (124 repositórios). Dos 122 que produziram pares válidos, 85 são aplicações (10.564 pares migration-commit) e 37 são bibliotecas (1.060 pares). A diferença de escala reflete a composição do corpus: aplicações concentram 90,9% dos pares, pois possuem significativamente mais migrations por repositório.
 
 | Métrica | Apps (85 repos) | Libs (37 repos) |
 |---------|----------------|----------------|

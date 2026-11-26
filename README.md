@@ -37,6 +37,7 @@ tcc-schema-code-evolution/
 │   ├── 04-metodologia.md             # Cap 4 - Metodologia
 │   ├── 05-resultados.md              # Cap 5 - Resultados
 │   ├── 06-conclusao.md               # Cap 6 - Conclusao
+│   ├── 07-referencias.md             # Referencias ABNT
 │   ├── Modelo-monografia-tcc.pdf     # Template UFPE
 │   ├── proposal/                     # Proposta de TCC
 │   │   └── proposta-tcc-oficial.pdf

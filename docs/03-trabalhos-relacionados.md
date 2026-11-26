@@ -78,9 +78,9 @@ PRISM demonstrou que a evolução de schema pode ser tratada como uma sequência
 
 ## 3.4 Acesso a Banco de Dados e ORM
 
-### 3.4.1 Yang, Li e Bhatt (2016)
+### 3.4.1 Chen et al. (2016)
 
-Yang, Li e Bhatt (2016) realizaram um estudo empírico sobre a prática de manutenção de código ORM (Object-Relational Mapping) em projetos open-source. Os autores analisaram a evolução de código ORM em projetos Java que utilizam Hibernate, medindo métricas como densidade de código ORM, frequência de mudanças e complexidade dos commits que modificam código ORM.
+Chen et al. (2016) realizaram um estudo empírico sobre a prática de manutenção de código ORM (Object-Relational Mapping) em projetos open-source. Os autores analisaram a evolução de código ORM em projetos Java que utilizam Hibernate, medindo métricas como densidade de código ORM, frequência de mudanças e complexidade dos commits que modificam código ORM.
 
 Os principais achados relevantes para este trabalho foram:
 
@@ -90,9 +90,9 @@ Os principais achados relevantes para este trabalho foram:
 
 Esse estudo complementa a perspectiva deste trabalho ao examinar a evolução sob a ótica do ORM (em vez do SQL embutido), embora em um ecossistema diferente (Java/Hibernate vs. Python/Django).
 
-### 3.4.2 Chen et al. (2024)
+### 3.4.2 Liu, Mondal e Chen (2024)
 
-Chen et al. (2024) conduziram um estudo empírico sobre as características de bugs de acesso a banco de dados em aplicações Java. Os autores analisaram 423 bugs em sete aplicações open-source de grande porte, classificando-os em categorias de causa raiz.
+Liu, Mondal e Chen (2024) conduziram um estudo empírico sobre as características de bugs de acesso a banco de dados em aplicações Java. Os autores analisaram 423 bugs em sete aplicações open-source de grande porte, classificando-os em categorias de causa raiz.
 
 Um achado relevante é que bugs relacionados ao schema (como referências a colunas ou tabelas que foram removidas ou renomeadas) representam uma parcela significativa dos bugs de acesso a banco de dados. Isso reforça a motivação deste trabalho: a falta de coordenação entre evolução de schema e adaptação do código é uma fonte real e mensurável de defeitos de software.
 
@@ -102,7 +102,7 @@ Um achado relevante é que bugs relacionados ao schema (como referências a colu
 
 A tabela a seguir posiciona este trabalho em relação à literatura revisada, destacando as diferenças em contexto, escala, metodologia e foco.
 
-| Aspecto | Qiu et al. (2013) | Meurice et al. (2016) | Vassiliadis et al. (2023) | Cleve et al. (2015) | Yang et al. (2016) | **Este trabalho** |
+| Aspecto | Qiu et al. (2013) | Meurice et al. (2016) | Vassiliadis et al. (2023) | Cleve et al. (2015) | Chen et al. (2016) | **Este trabalho** |
 |---------|-------------------|----------------------|--------------------------|--------------------|--------------------|-------------------|
 | **Contexto** | Java/JDBC | Java/JDBC | Misto (SQL) | Sistema único | Java/Hibernate | **Python/Django** |
 | **Mecanismo de schema** | SQL embutido | SQL embutido | Scripts SQL | Scripts SQL | ORM (Hibernate) | **Migrations Django** |

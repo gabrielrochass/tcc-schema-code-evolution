@@ -16,7 +16,7 @@ O commit típico de co-evolução altera 7 arquivos e modifica 120 linhas de có
 
 A análise por camada arquitetural revelou que o impacto de mudanças de schema vai além das camadas tipicamente associadas ao ORM. As categorias `other_python` (21,1%) e `test` (16,3%) são mais frequentemente co-modificadas do que `model` (7,8%) e `view` (5,4%), indicando que configurações, utilitários e testes absorvem uma parcela substancial do esforço de co-evolução.
 
-O cruzamento entre tipo de operação e camada revelou padrões distintos: operações destrutivas (`DeleteModel`, `RemoveField`) co-evoluem mais com testes do que operações aditivas, sugerindo que a remoção de funcionalidades exige maior esforço de atualização de testes. `CreateModel` gera o maior spread médio (53 arquivos), confirmando que a introdução de novos modelos tem impacto amplo na aplicação.
+O cruzamento entre tipo de operação e camada revelou padrões distintos: operações destrutivas (`DeleteModel`, `RemoveField`) co-evoluem mais fortemente com testes do que operações aditivas, sugerindo que a remoção de funcionalidades exige maior esforço de atualização de testes. `CreateModel` gera o maior spread médio (53 arquivos), confirmando que a introdução de novos modelos tem impacto amplo na aplicação.
 
 ### 6.1.3 Bibliotecas têm acoplamento mais forte que aplicações (RQ3)
 
@@ -26,11 +26,13 @@ Esse achado tem implicações práticas: mantenedores de bibliotecas Django deve
 
 ### 6.1.4 Pipeline reprodutível
 
-O estudo disponibiliza uma pipeline completa e open-source para mineração, extração e análise de co-evolução schema-código em projetos Django, composta por seis scripts Python que podem ser executados de forma independente. A pipeline processa desde a busca de repositórios na GitHub API até a geração de métricas de co-evolução por camada e tipo de operação.
+O estudo disponibiliza uma pipeline completa e open-source para mineração, extração e análise de co-evolução schema-código em projetos Django, composta por scripts Python que podem ser executados de forma independente. A pipeline processa desde a busca de repositórios na GitHub API até a geração de métricas de co-evolução por camada e tipo de operação.
 
 ---
 
 ## 6.2 Limitações
+
+As limitações deste estudo, discutidas em detalhe na Seção 4.5, são sintetizadas a seguir.
 
 ### 6.2.1 Definição de co-evolução
 
