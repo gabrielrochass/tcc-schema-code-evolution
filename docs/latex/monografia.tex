@@ -1,0 +1,384 @@
+% =============================================================================
+% TCC - Co-evolução entre Schema e Código em projetos Django open-source
+% Gabriel Rocha Souza Silva — CIn/UFPE — 2026
+% Compilar no Overleaf com abnTeX2
+% =============================================================================
+
+\documentclass[
+  12pt,
+  openright,
+  oneside,
+  a4paper,
+  brazil
+]{abntex2}
+
+% --- Pacotes ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}          % Times New Roman
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[alf,abnt-etal-list=0]{abntex2cite}
+
+% --- Configuração de código-fonte ---
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{gray},
+  stringstyle=\color{red!60!black},
+  breaklines=true,
+  frame=single,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  language=Python,
+  showstringspaces=false
+}
+
+% --- Metadados ---
+\titulo{Co-evolução entre Schema e Código de aplicação em projetos Django open-source: um estudo empírico baseado em mineração de repositórios}
+\autor{Gabriel Rocha Souza Silva}
+\local{Recife}
+\data{2026}
+\orientador{Leopoldo Motta Teixeira}
+\instituicao{%
+  Universidade Federal de Pernambuco
+  \par Centro de Informática
+  \par Graduação em Ciência da Computação
+}
+\tipotrabalho{Trabalho de Conclusão de Curso}
+\preambulo{Trabalho de Conclusão de Curso apresentado ao Curso de Ciência da Computação da Universidade Federal de Pernambuco, como requisito parcial para obtenção do título de Bacharel em Ciência da Computação.}
+
+% =============================================================================
+\begin{document}
+
+\frenchspacing
+\imprimircapa
+\imprimirfolhaderosto
+
+% --- Ficha catalográfica ---
+% TODO: Gerar em https://fichaeletronica.ufpe.br/ficha.html e inserir PDF aqui
+% \includepdf{ficha-catalografica.pdf}
+
+% --- Folha de aprovação ---
+\begin{folhadeaprovacao}
+  \begin{center}
+    {\ABNTEXchapterfont\large\imprimirautor}
+    \vspace*{\fill}\vspace*{\fill}
+
+    \begin{center}
+      \ABNTEXchapterfont\bfseries\Large\imprimirtitulo
+    \end{center}
+    \vspace*{\fill}
+
+    \hspace{.45\textwidth}
+    \begin{minipage}{.5\textwidth}
+      \imprimirpreambulo
+    \end{minipage}%
+    \vspace*{\fill}
+  \end{center}
+
+  Aprovado em: \_\_\_/\_\_\_/2026
+
+  \assinatura{\textbf{Leopoldo Motta Teixeira} \\ Orientador \\ Universidade Federal de Pernambuco}
+  \assinatura{\textbf{[Examinador(a)]} \\ Universidade Federal de Pernambuco}
+  \assinatura{\textbf{[Examinador(a)]} \\ [Universidade]}
+\end{folhadeaprovacao}
+
+% =============================================================================
+% RESUMO
+% =============================================================================
+\begin{resumo}
+Sistemas de software que utilizam bancos de dados relacionais dependem de um esquema cuja evolução frequentemente exige adaptações coordenadas no código da aplicação. No ecossistema Django, essa evolução é formalizada por meio de \textit{migrations} --- arquivos Python que descrevem operações de schema de forma estruturada e rastreável. Apesar da relevância dessa coordenação para a manutenção de software, poucos estudos investigaram empiricamente como mudanças de schema propagam pelas camadas arquiteturais do código em projetos que utilizam ORM. Este trabalho apresenta um estudo empírico quantitativo baseado em Mineração de Repositórios de Software, analisando 11.624 pares \textit{migration-commit} extraídos de 124 projetos Django \textit{open-source} (86 aplicações e 38 bibliotecas) que totalizam 34.345 operações de schema. Os resultados revelam que a co-evolução schema-código é a norma no ecossistema Django: 82,7\% dos \textit{commits} que introduzem \textit{migrations} também alteram código da aplicação (mediana \textit{per-repo} de 90,3\%). A análise por camada arquitetural mostra que testes (16,3\%) e arquivos Python auxiliares (21,1\%) são mais frequentemente co-modificados do que \textit{views} (5,4\%) ou \textit{admin} (1,7\%), e que operações destrutivas (\texttt{DeleteModel}, \texttt{RemoveField}) co-evoluem mais fortemente com testes do que operações aditivas. Contrariamente à hipótese inicial, bibliotecas reutilizáveis apresentam \textit{co-evolution ratio} mais alto (91,6\%) do que aplicações \textit{full-stack} (81,8\%), com proporção de testes co-modificados quase duas vezes maior. O estudo contribui com a primeira caracterização empírica de co-evolução schema-código no ecossistema Django, uma análise inédita por camada arquitetural cruzada com tipo de operação, e uma \textit{pipeline} reprodutível de \textit{scripts open-source}.
+
+\vspace{\onelineskip}
+\noindent\textbf{Palavras-chave:} co-evolução; evolução de schema; Django; \textit{migrations}; mineração de repositórios de software.
+\end{resumo}
+
+% =============================================================================
+% ABSTRACT
+% =============================================================================
+\begin{resumo}[Abstract]
+\begin{otherlanguage*}{english}
+Software systems that rely on relational databases depend on a schema whose evolution frequently requires coordinated changes to the application code. In the Django ecosystem, this evolution is formalized through migrations --- Python files that describe schema operations in a structured and traceable manner. Despite the relevance of this coordination for software maintenance, few studies have empirically investigated how schema changes propagate across the architectural layers of code in projects that use ORM. This work presents a quantitative empirical study based on Mining Software Repositories, analyzing 11,624 migration-commit pairs extracted from 124 open-source Django projects (86 applications and 38 libraries) totaling 34,345 schema operations. Results reveal that schema-code co-evolution is the norm in the Django ecosystem: 82.7\% of commits that introduce migrations also modify application code (per-repo median of 90.3\%). The layer-level analysis shows that tests (16.3\%) and auxiliary Python files (21.1\%) are more frequently co-modified than views (5.4\%) or admin (1.7\%), and that destructive operations (DeleteModel, RemoveField) co-evolve more strongly with tests than additive operations. Contrary to the initial hypothesis, reusable libraries exhibit a higher co-evolution ratio (91.6\%) than full-stack applications (81.8\%), with a nearly doubled proportion of co-modified tests. The study contributes the first empirical characterization of schema-code co-evolution in the Django ecosystem, a novel layer-level analysis crossed with operation type, and a reproducible open-source pipeline.
+
+\vspace{\onelineskip}
+\noindent\textbf{Keywords:} co-evolution; schema evolution; Django; migrations; mining software repositories.
+\end{otherlanguage*}
+\end{resumo}
+
+% --- Sumário ---
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents*
+\cleardoublepage
+
+% =============================================================================
+\textual
+% =============================================================================
+
+% =============================================================================
+\chapter{Introdução}
+% =============================================================================
+
+Sistemas de software que utilizam bancos de dados relacionais dependem de um esquema (\textit{schema}) que define a estrutura das tabelas, colunas, tipos de dados e restrições de integridade. Esse esquema não é estático: ao longo do ciclo de vida de uma aplicação, mudanças nos requisitos de negócio, correções de defeitos e otimizações de desempenho frequentemente exigem alterações na estrutura do banco de dados. Quando o schema muda --- novas tabelas são criadas, campos são adicionados, colunas são removidas --- o código da aplicação que interage com esses dados frequentemente precisa ser adaptado para refletir a nova estrutura. Esse fenômeno de modificação coordenada entre a estrutura do banco de dados e o código que a utiliza é denominado co-evolução schema-código \cite{qiu2013}.
+
+A co-evolução schema-código é um problema relevante para a manutenção de software. Estudos anteriores demonstraram que a falta de sincronização entre mudanças de schema e adaptações no código é uma fonte significativa de defeitos em aplicações de banco de dados \cite{meurice2016}. Quando um desenvolvedor modifica o schema sem atualizar todas as partes do código que dependem da estrutura anterior, o resultado pode ser erros em tempo de execução, perda de dados ou comportamento incorreto da aplicação. \citeonline{liu2024} constataram que bugs relacionados a schema, consultas SQL e APIs de acesso a dados representam 84,2\% dos defeitos de acesso a banco de dados em aplicações Java de grande porte.
+
+Apesar da relevância desse problema, a literatura existente sobre co-evolução schema-código apresenta lacunas importantes. Os estudos empíricos de maior escala \cite{qiu2013,vassiliadis2023} focaram predominantemente em sistemas que utilizam SQL explicitamente embutido no código-fonte, onde as consultas são escritas como \textit{strings} dentro de classes Java via JDBC. Pouco se sabe sobre como a co-evolução se manifesta em \textit{frameworks} que adotam o padrão ORM (\textit{Object-Relational Mapping}), nos quais a interação com o banco de dados é mediada por uma camada de abstração e as mudanças de schema são formalizadas por mecanismos específicos do \textit{framework}.
+
+O ecossistema Django, um dos \textit{frameworks} de desenvolvimento web mais adotados na linguagem Python, representa uma oportunidade particularmente favorável para o estudo empírico de co-evolução schema-código. Desde a versão 1.7, o Django disponibiliza um sistema de \textit{migrations}: arquivos Python gerados automaticamente a partir de alterações nas definições de modelo (\texttt{models.py}) que descrevem, de forma estruturada e tipada, as operações de evolução do schema relacional. Essa padronização confere três propriedades que viabilizam a análise sistemática em larga escala. Primeiro, as mudanças de schema são rastreáveis como arquivos versionados no sistema de controle de versão (Git), o que permite associar cada \textit{migration} ao \textit{commit} que a introduziu. Segundo, as operações de schema são estruturadas e passíveis de extração automatizada via \textit{parsing} da \textit{Abstract Syntax Tree} (AST) do Python, sem necessidade de executar o código ou instalar dependências do projeto. Terceiro, o fluxo causal é bem definido: o desenvolvedor altera \texttt{models.py}, o comando \texttt{makemigrations} gera a \textit{migration}, e o \textit{commit} registra ambas as mudanças junto com eventuais adaptações no restante do código.
+
+Além disso, a arquitetura do Django organiza o código da aplicação em camadas com responsabilidades bem definidas --- \textit{models}, \textit{views}, \textit{admin}, \textit{serializers}, \textit{forms}, \textit{templates}, URLs e testes --- cada uma com um grau distinto de acoplamento com o schema do banco de dados. Essa separação arquitetural permite uma análise mais granular do que a oferecida por estudos anteriores, que trataram o código da aplicação como uma massa homogênea: é possível identificar não apenas se o código foi co-modificado com o schema, mas especificamente quais camadas da arquitetura foram afetadas.
+
+\section{Objetivo}
+
+Este trabalho tem como objetivo investigar empiricamente os padrões de co-evolução entre schema de banco de dados e código de aplicação em projetos Django \textit{open-source}, utilizando uma abordagem de Mineração de Repositórios de Software (MSR). Especificamente, o estudo busca caracterizar o grau de acoplamento entre mudanças de schema e mudanças no código, mapear como essas mudanças propagam pelas camadas da arquitetura Django e verificar se a natureza do projeto (aplicação \textit{full-stack} versus biblioteca reutilizável) influencia os padrões observados.
+
+\section{Perguntas de Pesquisa}
+
+Três perguntas de pesquisa guiam a investigação:
+
+\textbf{RQ1: Qual o grau de acoplamento entre mudanças de schema e mudanças no código de aplicação nos commits de projetos Django open-source?}
+
+Esta pergunta mede o \textit{co-evolution ratio} --- a proporção de \textit{commits} que introduzem \textit{migrations} e que também alteram arquivos de código fora do diretório de \textit{migrations}.
+
+\textbf{RQ2: Quais camadas da arquitetura Django são mais frequentemente co-modificadas em resposta a evoluções de schema, e como essa distribuição se relaciona com o tipo de operação de migration realizada?}
+
+Esta pergunta cruza duas dimensões: a camada arquitetural afetada (\textit{model}, \textit{view}, \textit{admin}, \textit{serializer}, \textit{form}, \textit{template}, \textit{test}, URL) e o tipo de operação de \textit{migration} (\texttt{CreateModel}, \texttt{AddField}, \texttt{RemoveField}, \texttt{AlterField}, entre outros).
+
+\textbf{RQ3: Os padrões de co-evolução observados diferem entre aplicações Django full-stack e bibliotecas reutilizáveis?}
+
+Esta pergunta compara as métricas de RQ1 e RQ2 entre dois grupos: aplicações \textit{full-stack} e bibliotecas reutilizáveis.
+
+\section{Contribuições}
+
+Este trabalho oferece quatro contribuições:
+
+\begin{enumerate}
+  \item \textbf{Caracterização empírica do acoplamento schema-código em Django.} Quantificação do \textit{co-evolution ratio}, \textit{code churn} e \textit{spread} em 124 projetos Django \textit{open-source}.
+  \item \textbf{Mapeamento da propagação por camada arquitetural.} Identificação de quais camadas da arquitetura Django são mais afetadas por mudanças de schema, cruzada com o tipo de operação de \textit{migration}.
+  \item \textbf{Comparação entre aplicações e bibliotecas.} Segmentação do corpus em 86 aplicações e 38 bibliotecas para investigar se a natureza do projeto influencia os padrões de co-evolução.
+  \item \textbf{Pipeline reprodutível.} Disponibilização de \textit{scripts open-source} para mineração, extração e análise de co-evolução em projetos Django.
+\end{enumerate}
+
+\section{Estrutura do Documento}
+
+O restante deste documento está organizado da seguinte forma. O Capítulo~\ref{chap:fundamentacao} apresenta a fundamentação teórica. O Capítulo~\ref{chap:relacionados} revisa os trabalhos relacionados. O Capítulo~\ref{chap:metodologia} detalha a metodologia. O Capítulo~\ref{chap:resultados} apresenta os resultados. Por fim, o Capítulo~\ref{chap:conclusao} discute as conclusões, limitações e direções para trabalhos futuros.
+
+
+% =============================================================================
+\chapter{Fundamentação Teórica}\label{chap:fundamentacao}
+% =============================================================================
+
+% NOTE: Conteúdo completo disponível em docs/02-fundamentacao-teorica.md
+% Para o Overleaf, copie o conteúdo LaTeX-convertido desse arquivo.
+% As seções são:
+
+\section{Evolução de Schema de Banco de Dados}
+
+Sistemas de software que utilizam bancos de dados relacionais dependem de um esquema que define a estrutura das tabelas, colunas, tipos de dados, restrições de integridade e índices. Esse esquema não é estático: ao longo do ciclo de vida de uma aplicação, mudanças nos requisitos de negócio, correções de bugs e otimizações de desempenho frequentemente exigem alterações na estrutura do banco de dados \cite{roddick1992}.
+
+A evolução de schema refere-se ao processo de modificar o esquema de um banco de dados enquanto se preserva a integridade dos dados existentes e a compatibilidade com o código da aplicação que o utiliza \cite{curino2008}. A importância da evolução de schema para a engenharia de software reside no fato de que o esquema do banco de dados serve como um contrato implícito entre a camada de persistência e as demais camadas da aplicação. Quando esse contrato é alterado, todo o código que depende da estrutura anterior pode ser afetado \cite{meurice2016}.
+
+\citeonline{curino2008} classificam as operações de evolução de schema em categorias de acordo com seu impacto: \textbf{operações aditivas} (criam novos elementos sem afetar os existentes), \textbf{operações destrutivas} (removem elementos do schema) e \textbf{operações de modificação} (alteram propriedades de elementos existentes).
+
+\section{Django e o Sistema de Migrations}
+
+\subsection{O framework Django}
+
+Django é um \textit{framework} de desenvolvimento web em Python que segue o padrão arquitetural Model-View-Template (MVT). Lançado em 2005 e mantido pela Django Software Foundation, o \textit{framework} é amplamente adotado tanto em projetos \textit{open-source} quanto em aplicações comerciais \cite{djangodocs2024}.
+
+A arquitetura de uma aplicação Django é organizada em camadas com responsabilidades bem definidas: \textbf{Models} (\texttt{models.py}), \textbf{Views} (\texttt{views.py}), \textbf{Templates} (\texttt{.html}), \textbf{Admin} (\texttt{admin.py}), \textbf{Forms} (\texttt{forms.py}), \textbf{Serializers} (\texttt{serializers.py}) e \textbf{URLs} (\texttt{urls.py}).
+
+\subsection{O sistema de migrations do Django}
+
+O sistema de \textit{migrations} do Django foi introduzido na versão 1.7 (2014) e constitui o mecanismo oficial para gerenciar a evolução do schema. O fluxo de trabalho típico segue três etapas: (1) o desenvolvedor altera \texttt{models.py}; (2) \texttt{makemigrations} gera automaticamente um arquivo de \textit{migration}; (3) \texttt{migrate} aplica as \textit{migrations} pendentes ao banco de dados.
+
+Cada \textit{migration} é um arquivo Python com uma estrutura canônica contendo uma lista \texttt{operations} com operações tipadas como \texttt{CreateModel}, \texttt{AddField}, \texttt{RemoveField}, \texttt{AlterField}, entre outras.
+
+\subsection{Migrations como artefatos de evolução de schema}
+
+As \textit{migrations} do Django possuem propriedades que as tornam particularmente adequadas para o estudo de evolução de schema: rastreabilidade (arquivos versionados no Git), parseabilidade (extração via AST), causalidade explícita (\texttt{models.py} $\rightarrow$ \textit{migration}) e granularidade (operações atômicas tipadas). Essas propriedades distinguem as \textit{migrations} de abordagens anteriores baseadas em SQL embutido \cite{qiu2013}.
+
+\section{Mineração de Repositórios de Software}
+
+Mineração de Repositórios de Software (MSR) é uma área de pesquisa que utiliza técnicas de análise de dados para extrair informações úteis dos artefatos produzidos durante o desenvolvimento de software \cite{hassan2008}. Este estudo emprega três técnicas de MSR: análise de \textit{commits} via Git, \textit{parsing} de AST e classificação heurística de arquivos.
+
+A utilização de projetos \textit{open-source} hospedados no GitHub como corpus de estudo é uma prática consolidada, embora apresente ameaças à validade conhecidas \cite{kalliamvakou2014}.
+
+\section{Co-evolução Schema-Código}
+
+Co-evolução schema-código refere-se ao fenômeno pelo qual mudanças na estrutura do banco de dados e mudanças no código da aplicação ocorrem de forma coordenada ao longo do tempo \cite{qiu2013}. Neste trabalho, a co-evolução é operacionalizada como \textit{same-commit co-evolution}: uma \textit{migration} e o código são considerados co-evoluídos quando ambos são modificados no mesmo \textit{commit}. Essas limitações são discutidas na Seção~\ref{sec:ameacas}. A métrica central é o \textbf{\textit{co-evolution ratio}}: a proporção de \textit{commits} que introduzem \textit{migrations} e que também alteram código.
+
+
+% =============================================================================
+\chapter{Trabalhos Relacionados}\label{chap:relacionados}
+% =============================================================================
+
+% NOTE: Conteúdo completo em docs/03-trabalhos-relacionados.md
+
+\section{Estudos Empíricos de Co-evolução Schema-Código}
+
+\citeonline{qiu2013} conduziram o primeiro estudo empírico em larga escala sobre co-evolução, analisando dez aplicações Java/JDBC totalizando mais de 160.000 revisões. Os autores demonstraram que schemas evoluem com frequência e que mudanças de schema induzem modificações significativas no código.
+
+\citeonline{vassiliadis2023} analisaram 195 projetos FOSS e encontraram que poucos projetos evoluem schema e código em sincronia, com schemas tendendo a concentrar mudanças no início do ciclo de vida.
+
+\section{Detecção de Inconsistências Schema-Código}
+
+\citeonline{meurice2016} propuseram uma abordagem automatizada para detectar inconsistências quando o schema muda e o código não acompanha. \citeonline{meurice2014} desenvolveram DAHLIA, uma ferramenta visual que minera o histórico de evolução de schema a partir de repositórios Git.
+
+\section{Evolução de Schema em Larga Escala}
+
+\citeonline{cleve2015} conduziram um estudo de caso detalhado sobre 18 anos de evolução de schema de um sistema, documentando 320 mudanças e padrões de propagação em cascata. \citeonline{curino2008} desenvolveram o PRISM, introduzindo uma taxonomia de operações de evolução.
+
+\section{Acesso a Banco de Dados e ORM}
+
+\citeonline{chen2016} realizaram estudo empírico sobre manutenção de código ORM (Hibernate/Java), constatando que \textit{commits} ORM são mais complexos que outros. \citeonline{liu2024} analisaram 423 bugs de acesso a banco de dados, demonstrando que 84,2\% relacionam-se a schema, SQL ou API.
+
+\section{Posicionamento deste Trabalho}
+
+Este trabalho se diferencia da literatura em quatro aspectos: (1) ecossistema Django com ORM; (2) classificação por camada arquitetural; (3) cruzamento operação $\times$ camada; (4) comparação aplicações vs.\ bibliotecas.
+
+
+% =============================================================================
+\chapter{Metodologia}\label{chap:metodologia}
+% =============================================================================
+
+% NOTE: Conteúdo completo em docs/04-metodologia.md (com diagramas Mermaid)
+% Diagramas podem ser exportados como imagens e incluídos com \includegraphics
+
+\section{Visão Geral}
+
+A \textit{pipeline} de análise é composta por seis etapas sequenciais: (1) coleta via GitHub Search API, (2) filtragem e classificação do corpus, (3) extração de operações via AST, (4) correlação \textit{migration-commit} via Git, (5) classificação por camada e cálculo de métricas, e (6) análise agregada. A \textit{pipeline} é implementada por quatro \textit{scripts} Python.
+
+% TODO: Inserir Figura 1 — Pipeline de análise (diagrama disponível no repositório)
+
+\section{Seleção do Corpus}
+
+A seleção seguiu um processo de filtragem progressiva: 3.850 \textit{matches} na busca GitHub $\rightarrow$ 1.000 candidatos avaliados $\rightarrow$ 416 projetos Django verificados $\rightarrow$ 131 com $\geq$15 \textit{migrations} $\rightarrow$ 124 no corpus final (excluindo 7 projetos didáticos).
+
+Os 124 repositórios foram classificados manualmente em 86 aplicações \textit{full-stack} e 38 bibliotecas reutilizáveis. A classificação foi validada por um classificador heurístico automatizado com concordância substancial (Cohen's $\kappa$ = 0,63) \cite{landis1977}.
+
+\section{Extração de Dados}
+
+As operações de \textit{migration} são extraídas via \textit{parsing} AST, sem necessidade de instalar dependências \cite{qiu2013}. Para cada \textit{migration}, o \textit{commit} que a introduziu é identificado via \texttt{git log --diff-filter=A}, e os arquivos co-modificados são obtidos via \texttt{git diff-tree --numstat}. Cada arquivo é classificado por camada Django (model, view, admin, serializer, form, test, template, url, other\_python, other).
+
+\section{Métricas}
+
+As métricas incluem: \textit{co-evolution ratio} (RQ1), \textit{code churn} e \textit{spread} (RQ1/RQ2), distribuição por camada e tipo de operação (RQ2), e comparação entre grupos (RQ3).
+
+\section{Ameaças à Validade}\label{sec:ameacas}
+
+As principais ameaças incluem: a definição \textit{same-commit} pode superestimar (kitchen-sink commits) ou subestimar (adaptações em commits posteriores) o acoplamento; a classificação heurística de camadas pode ser imprecisa; e o corpus é limitado a projetos GitHub com $\geq$20 estrelas e $\geq$15 \textit{migrations} \cite{kalliamvakou2014}.
+
+
+% =============================================================================
+\chapter{Resultados}\label{chap:resultados}
+% =============================================================================
+
+A análise processou 11.624 pares \textit{migration-commit} extraídos de 122 repositórios. Dos 124 repositórios do corpus, dois não produziram pares válidos. A diferença entre 12.173 arquivos de \textit{migration} identificados e os 11.624 pares analisados deve-se a \textit{migrations} cujo \textit{commit} de introdução não pôde ser determinado.
+
+\section{RQ1: Grau de Acoplamento Schema-Código}
+
+Dos 11.624 \textit{commits} que introduziram \textit{migrations}, 9.616 (82,7\%) também alteraram pelo menos um arquivo de código fora do diretório de \textit{migrations}. A mediana do \textit{co-evolution ratio} por repositório é de 90,3\%, com intervalo interquartil de 81,6\% a 96,9\%.
+
+\begin{table}[htb]
+\centering
+\caption{Métricas de co-evolução (RQ1)}
+\label{tab:rq1}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Métrica} & \textbf{Mediana} & \textbf{IQR} & \textbf{Média} \\
+\midrule
+Spread (arquivos) & 7,0 & 3,0 -- 16,0 & 33,9 \\
+Code churn (LOC) & 120,0 & 30,0 -- 531,0 & 5.681,2 \\
+\bottomrule
+\end{tabular}
+\fonte{Elaborada pelo próprio autor.}
+\end{table}
+
+O \textit{co-evolution ratio} de 82,7\% é consideravelmente mais alto do que o observado por \citeonline{vassiliadis2023} em projetos FOSS genéricos. Essa discrepância pode ser explicada pelo fluxo de trabalho do Django, que cria uma tendência natural ao acoplamento temporal.
+
+\section{RQ2: Propagação por Camada e Tipo de Operação}
+
+\begin{table}[htb]
+\centering
+\caption{Distribuição por camada arquitetural}
+\label{tab:camadas}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Camada} & \textbf{Ocorrências} & \textbf{Proporção} \\
+\midrule
+other (não-Python) & 101.921 & 31,2\% \\
+other\_python & 68.836 & 21,1\% \\
+test & 53.324 & 16,3\% \\
+template & 36.649 & 11,2\% \\
+model & 25.526 & 7,8\% \\
+view & 17.562 & 5,4\% \\
+serializer & 6.808 & 2,1\% \\
+admin & 5.501 & 1,7\% \\
+form & 5.457 & 1,7\% \\
+url & 4.584 & 1,4\% \\
+\bottomrule
+\end{tabular}
+\fonte{Elaborada pelo próprio autor.}
+\end{table}
+
+Operações destrutivas (\texttt{DeleteModel} 87,5\%, \texttt{RemoveField} 86,9\%) apresentam os maiores ratios de co-evolução, sugerindo que mudanças que quebram referências exigem adaptação imediata. \texttt{CreateModel} tem o maior \textit{spread} médio (53,1 arquivos), confirmando que a criação de novos modelos tem impacto amplo.
+
+A proporção de testes co-modificados cresce com operações destrutivas: de 10,8\% em \texttt{CreateModel} para 21,4\% em \texttt{DeleteModel}.
+
+\section{RQ3: Aplicações vs.\ Bibliotecas}
+
+\begin{table}[htb]
+\centering
+\caption{Comparação aplicações vs.\ bibliotecas}
+\label{tab:rq3}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Métrica} & \textbf{Apps (85 repos)} & \textbf{Libs (37 repos)} \\
+\midrule
+Co-evolution ratio & 81,8\% & 91,6\% \\
+Per-repo mediana & 89,4\% & 94,4\% \\
+Spread mediano & 7,0 & 7,0 \\
+Churn mediano (LOC) & 117,0 & 177,0 \\
+Testes (\%) & 15,7\% & 27,6\% \\
+\bottomrule
+\end{tabular}
+\fonte{Elaborada pelo próprio autor.}
+\end{table}
+
+Contrariamente à hipótese inicial, bibliotecas apresentam \textit{co-evolution ratio} mais alto (91,6\%) do que aplicações (81,8\%). A explicação é que o ratio mede acoplamento \textit{dentro do repositório}, e bibliotecas, por terem escopo mais restrito, são proporcionalmente mais impactadas. Bibliotecas dedicam $\sim$28\% das mudanças co-evoluídas a testes (versus $\sim$16\% em apps).
+
+
+% =============================================================================
+\chapter{Conclusão}\label{chap:conclusao}
+% =============================================================================
+
+Este trabalho investigou empiricamente os padrões de co-evolução entre schema e código em 124 projetos Django \textit{open-source}, analisando 11.624 pares \textit{migration-commit} com 34.345 operações de schema.
+
+\section{Contribuições}
+
+O estudo revelou que co-evolução schema-código é a norma em Django (82,7\%, mediana 90,3\%), consideravelmente mais alto que em projetos genéricos \cite{vassiliadis2023}. A análise por camada mostrou que o impacto vai além das camadas clássicas, com \textit{other\_python} e \textit{test} dominando. A comparação entre grupos refutou a hipótese inicial: bibliotecas têm acoplamento mais forte (91,6\%) que aplicações (81,8\%).
+
+\section{Limitações}
+
+As limitações, discutidas em detalhe na Seção~\ref{sec:ameacas}, incluem: a definição \textit{same-commit}, a classificação heurística de camadas, a representatividade do corpus e a correlação (não causalidade) entre mudanças \cite{qiu2013}.
+
+\section{Trabalhos Futuros}
+
+Direções incluem: análise temporal do ratio ao longo do ciclo de vida, janela temporal expandida para co-evolução tardia, análise qualitativa de amostras, replicação em outros \textit{frameworks} ORM (Rails, Laravel, Alembic), ferramentas de suporte baseadas nos padrões identificados, e análise do acoplamento total (intra + inter-repo) em bibliotecas.
+
+
+% =============================================================================
+\postextual
+% =============================================================================
+
+\bibliography{refs}
+
+\end{document}
